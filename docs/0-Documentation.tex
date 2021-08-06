@@ -1,0 +1,114 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Define Article %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[12pt]{article}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Using Packages %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{indentfirst}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{hyperref}
+\usepackage{datatool}
+\usepackage{bookmark}
+\usepackage[utf8]{inputenc}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%% Page Setting %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\geometry{a4paper}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%% New Commands %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DeclareMathOperator{\E}{\mathbb{E}}
+
+\DTLsetseparator{,}
+\DTLloaddb[noheader, keys={key,val}]{apns}{../py/texData/a-outPns.csv} 
+\newcommand{\lookup}[2]{\DTLfetch{#1}{key}{#2}{val}}
+% \text{\dtlcolumnindex{mydata}{key}}
+% % \DTLgetcolumnindex{\dtlcolumnindex{mydata}{key}}{mydata}{a}
+% \DTLfetch{mydata}{key}{a}{value}
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Title & Author %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\title{Thesis \\ Documentation}
+\author{Mahdi Mir}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+										%		
+									%%%%%%%%
+								%%%%%%%%%%%%%%%%
+							%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Document beginning %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Title/TOC %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\maketitle
+\tableofcontents
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Section %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Scripts}
+\subsection{a}
+\subsubsection{Indices Data}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{enumerate}
+	\item Indeices data got from Hamid-Reza Amiri. %% [todo] Write the input data conventions.
+\end{enumerate}
+
+\begin{enumerate}
+	\item I Clean data, add gregorian date to it.
+	\item I make it consistent with the notation and convention of date in the adj prices data.
+\end{enumerate}
+
+Indices data saved in CleanData directory.
+
+\subsubsection{Adjusted Prices Data}
+
+\begin{itemize}
+	\item The adjusted prices data set got from Hamid-Reza Amiri in the associated folder. %%[todo] Write down the raw data column names and units
+	\item ID-Tickers map got from Hamid-Reza again.
+\end{itemize}
+
+\begin{enumerate}
+	\item The data got prices only for traded days. Holidays are absent. When Trading is halted on a security there is no entry in data.
+	\item I constructed all unique IDs X Dates pairs. By Cartesian multiplication of unique IDs and unique days.
+	\item I sort data by dates.
+	\item I forwardly fill close prices for each ID (that'self why I sort by dates).i.e. If security is halted for trading then it would have NAN entries in the associated (ID, Date) pair, by forward filling the close prices if the security has a price in a prior date then for all NAN values from the prior date to next trading day prices is set to the prior date.
+	\item Then I remove remained NAN close price rows. Those are ones before their IPO (Has no prior not-NA close price).
+	      6. For the filled days, I define a new column named `TradeHalt' which is True for halted days and false otherwise. These are the days that security cannot be traded.
+	\item Date column in the data is Gregorian date, I create a new column named `JDate' which is the Jalali counter part Date.
+	\item I added ticker names by the other dataset which maps `IDs' to `Tickers`.
+	\item I remove IDs without Tickers. These are not stocks of firms.
+	\item I create a new column called `JYearMonth', which contains year and month of each row as an integer.e.g. 138001, for the first month of year 1380.
+	\item Finally I keep these columns: [ ID, Ticker, Date, JDate, Close, TradeHalt]
+\end{enumerate}
+
+\subsubsection{Outputs}
+
+\begin{enumerate}
+	\item \lookup{apns}{indices}
+	\item \lookup{apns}{adjprices}
+\end{enumerate}
+Adjusted Price data saved in CleanData directory.
+
+
+\subsection{b}
+\subsubsection{Adjusted Prices Metadata}
+
+\subsection{d}
+\xi\chi
+
+
+
+
+\end{document}

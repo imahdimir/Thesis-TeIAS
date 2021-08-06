@@ -1,0 +1,132 @@
+\documentclass[aspectratio=169]{beamer}
+
+\usepackage{graphics}
+
+\title[Returns to Buying Winners and Selling Losers]{Returns to Buying Winners and Selling Losers}
+\subtitle{Based on Jegadeesh \& Titman (1993) JF }
+\author[Mahdi Mir]{Mahdi Mir}
+\institute{TeIAS}
+\date[Apr 2021]{Apr 2021}
+
+\usetheme{CambridgeUS}
+
+
+\begin{document}
+
+\maketitle
+
+\section{Overview}
+
+\begin{frame}
+	\begin{center}
+		\resizebox{8cm}{!}{
+			\begin{tabular}{rlcccccccccc}
+				      &          & \multicolumn{5}{c}{Panel A} & \multicolumn{5}{c}{Panel B}                                                                \\ \cline{3-7}\cline{8-12}
+				      & J        & K=                          & 3                           & 6      & 9      & 12     & K= & 3 & 6      & 9      & 12     \\ \hline
+				3     & Sell     &                             & -0.022                      & -0.018 & -0.016 & -0.014 &    &   & -0.005 & -0.005 & -0.005 \\
+				[1ex] &          &                             & (5.24)                      & (5.07) & (5.06) & (5.07) &    &   &        &        &        \\
+				3     & Buy      &                             & 0.0245                      & 0.0190 & 0.0176 & 0.0162 &    &   &        &        &        \\[1ex]
+				      &          &                             & (5.89)                      & (5.55) & (5.94) & (6.00) &    &   &        &        &        \\
+				3     & Buy-sell &                             & 0.0006                      & 0.0008 & 0.0013 & 0.0013 &    &   &        &        &        \\[1ex]
+				      &          &                             & (0.40)                      & (0.79) & (1.74) & (2.06) &    &   &        &        &        \\
+				6     & Sell     &                             & -0.020                      & -0.014 & -0.013 & -0.012 &    &   &        &        &        \\[1ex]
+				      &          &                             & (5.39)                      & (4.90) & (4.82) & (5.10) &    &   &        &        &        \\
+				6     & Buy      &                             & 0.0200                      & 0.0165 & 0.0146 & 0.0129 &    &   &        &        &        \\[1ex]
+				      &          &                             & (5.25)                      & (5.80) & (5.82) & (5.60) &    &   &        &        &        \\
+				6     & Buy-sell &                             & -0.000                      & 0.0011 & 0.0012 & 0.0003 &    &   &        &        &        \\[1ex]
+				      &          &                             & (0.18)                      & (1.16) & (1.54) & (0.65) &    &   &        &        &        \\
+				9     & Sell     &                             & -0.020                      & -0.014 & -0.012 & -0.011 &    &   &        &        &        \\[1ex]
+				      &          &                             & (5.43)                      & (4.85) & (4.66) & (4.85) &    &   &        &        &        \\
+				9     & Buy      &                             & 0.0209                      & 0.0153 & 0.0129 & 0.0111 &    &   &        &        &        \\[1ex]
+				      &          &                             & (5.91)                      & (5.89) & (5.74) & (5.45) &    &   &        &        &        \\
+				9     & Buy-sell &                             & 3.0158                      & 0.0004 & 0.0005 & -0.000 &    &   &        &        &        \\[1ex]
+				      &          &                             & (0.01)                      & (0.40) & (0.64) & (0.40) &    &   &        &        &        \\
+				12    & Sell     &                             & -0.017                      & -0.013 & -0.011 & -0.010 &    &   &        &        &        \\[1ex]
+				      &          &                             & (4.70)                      & (4.73) & (4.61) & (4.78) &    &   &        &        &        \\
+				12    & Buy      &                             & 0.0175                      & 0.0123 & 0.0098 & 0.0087 &    &   &        &        &        \\[1ex]
+				      &          &                             & (5.29)                      & (5.07) & (4.82) & (4.82) &    &   &        &        &        \\
+				12    & Buy-sell &                             & 8.3600                      & -0.000 & -0.000 & -0.000 &    &   &        &        &        \\[1ex]
+				      &          &                             & (0.05)                      & (0.40) & (0.80) & (1.26) &    &   &        &        &
+			\end{tabular}}
+	\end{center}
+\end{frame}
+
+
+\begin{frame}{Trading Strategies}
+	\begin{itemize}
+		\item The strategies we consider select stocks based on their returns over the past 1, 2, 3, or 4 quarters. We also consider holding periods that vary from 1 to 4 quarters. This gives a total of 16 strategies.
+		\item Specifically, a strategy that selects stocks on the basis of returns over the past J months and holds them for K months (we will refer to this as a J-month/K-month strategy)
+		\item At the beginning of each month t the securities are ranked in ascending order based on their returns in the past J months. Based on these rankings, ten decile portfolios are formed that equally weigh the stocks contained in the top decile, the second decile, and so on.
+		\item The top decile portfolio is called the " losers" decile and the bottom decile. is called the " winners" decile.
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Trading Strategies (con't)}
+	\begin{itemize}
+		\item In each month t, the strategy buys the winner portfolio and sells the loser portfolio, holding this position for K months.
+		\item In addition, the strategy closes out the position initiated in month t - K.
+	\end{itemize}
+\end{frame}
+
+
+\section{Data'self Summary}
+
+
+\begin{frame}{Summary Stats. of the Data}
+	\begin{itemize}
+		\item Start Date: 1380-01
+		\item End Date: 1399-09
+		\item The data includes daily open, last, high, low, close prices and volume for each stock, in all days a stock is traded on TSE.
+		\item Prices are adjusted.
+	\end{itemize}
+\end{frame}
+
+
+
+
+\begin{frame}{Monthly Return of Equally Portfolio of All Securities in the Market}
+	\begin{itemize}
+		\item What if at the start of each Jalali month we buy a portfolio of equal weight of the whole market, and holding it just until next month?
+		\item Monthly returns for the latter portfolio are drawn in the next slide.
+		\item Yearly returns which are derived from monthly returns are depicted in the next two slide.
+	\end{itemize}
+\end{frame}
+
+
+
+
+\begin{frame}{Monthly Return of Equally Portfolio of All Securities in the Market}
+	\begin{center}
+		\begin{tabular}{l r r}
+			                       & Monthly     & Annually   \\ \cline{2-3}
+			Number                 & 236         & 20         \\
+			Positive Return Number & 164         & 17         \\
+			Negative Return Number & 71          & 3          \\ \hline
+			Returns                &             &            \\ \hline
+			Mean                   & 3.43\%      & 57.73\%    \\
+			Var.                   & 0.0050      & 0.6598     \\
+			STD                    & 0.0711      & 0.8123     \\
+			Median                 & 1.98\%      & 31.06\%    \\
+			Max.                   & 43.23\%     & 369.51\%   \\
+			Min.                   & -11.20\%    & -8.69\%    \\
+			Cumulative             & 172687.60\% & 76764.42\%
+		\end{tabular}
+	\end{center}
+\end{frame}
+
+
+\section{Results}
+\subsection{Most Significant Results}
+
+\begin{frame}{Most Significant Results}
+	\begin{itemize}
+		\item First 100 most Significant results in the sense of being different from zero, have all Positive returns.
+		\item There are 1651 Strategies with significance level more then 1\%.
+		\item 850 of them have positive returns.
+		\item Most significant positive returns are tabulated in the next slide.
+	\end{itemize}
+\end{frame}
+
+
+
+\end{document}
