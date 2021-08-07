@@ -1,5 +1,4 @@
 ##
-from datetime import datetime as dt
 import pathlib
 import itertools
 
@@ -10,13 +9,14 @@ from dateutil.relativedelta import relativedelta
 from openpyxl.utils.dataframe import dataframe_to_rows
 from persiantools.jdatetime import JalaliDate
 
-from py import z_ns
+from py import z_namespaces as ns
+
 
 # Shortened Namespaces
-po = z_ns.Portfolio()
-dirs = z_ns.Dirs()
-gf = z_ns.GlobalFiles()
-apw = z_ns.AdjPricesWithDates()
+po = ns.Portfolio()
+dirs = ns.ProjectDirectories()
+gf = ns.GlobalFiles()
+apw = ns.AdjPricesWithDates()
 
 class Portfolio:
     def __init__(self):
@@ -67,7 +67,7 @@ def save_df_to_xl(df: pd.DataFrame,
         length = max(len(str(cell.value)) for cell in column)
         length = length if length <= max_col_length else max_col_length
         ws.column_dimensions[column[0].column_letter].width = length
-    wb.save(pn_suff_less.resolve().with_suffix(z_ns.xlsuf))
+    wb.save(pn_suff_less.resolve().with_suffix(ns.xl_suf))
     wb.close()
 
 def return_clusters_indices(iterable_obj, clustersize=100):
@@ -106,12 +106,13 @@ def find_wd_after_skipping_mmonth_and_pdays(df_with_nth_wday_each_mon,
     df[apw.pDaysSkip] = p_days_to_skip
     df1 = df[[apw.date, apw.nthWDDate]].drop_duplicates()
     df1['Date+Skip'] = df1[apw.nthWDDate].apply(lambda x: x + relativedelta(
-        months = m_months_skip,
-        days = p_days_to_skip))
+            months = m_months_skip,
+            days = p_days_to_skip))
     df1[apw.afterSkipWDDate] = df1['Date+Skip'].apply(lambda x:
-    df1[df1[apw.date].ge(x)][apw.date].min())
+                                                      df1[df1[apw.date].ge(x)][
+                                                          apw.date].min())
     df1[apw.afterSkipWDJDate] = df1[apw.afterSkipWDDate].apply(lambda x: str(
-        JalaliDate.to_jalali(x)) if not pd.isna(x) else x)
+            JalaliDate.to_jalali(x)) if not pd.isna(x) else x)
     df = df.merge(df1, how = 'left')
     return df
 
@@ -151,31 +152,32 @@ def compute_returns(prices_df,
         which_col_returns].pct_change(periods = how_many_periods)
     return prices_df
 
-def compute_bins_numbers(prices_df, groupby_list, which_col, how_many_bins):
+def compute_bins_numbers(prices_df, groupby_list, which_col, quantiles):
     prices_df.loc[prices_df[which_col].notna(), apw.binNo] = \
         prices_df[prices_df[which_col].notna()].groupby(groupby_list)[
-            which_col].apply(lambda x: 1 + pd.cut(x,
-                                                  bins = how_many_bins,
-                                                  labels = False))
+            which_col].apply(lambda x: 1 + pd.qcut(x,
+                                                   q = quantiles,
+                                                   labels = False))
     return prices_df
 
 def build_all_possible_configs(eval_day_skip_m_skip_d,
                                from_month_to_month,
                                eval_months,
                                holding_months,
-                               qcuts):
+                               quantiles):
     """ examples:
         evalSkipMonthSkipDay = [(0, 0, 0), (0, 1, 0), (0, 0, 7)]
         fromMonthToMonth = [(138001, 139909), (138001, 139712), (138001,
         139512),(138001, 139012), ]
         evalMonths = [3, 6, 9, 11, 12]
         holdingMonths = [3, 6, 9, 12]
-        qCut = [3, 5, 6, 10]
+        quantiles = [3, 5, 6, 10]
     """
-    rs = z_ns.RSSParams()
+    rs = ns.RSSParams()
     all_vals = [eval_day_skip_m_skip_d, from_month_to_month, eval_months,
-                holding_months, qcuts]
+                holding_months, quantiles]
     all_sts = list(itertools.product(*all_vals))
+    print(len(all_sts))
     all_configs = []
     for el in all_sts:
         config = {
@@ -186,13 +188,12 @@ def build_all_possible_configs(eval_day_skip_m_skip_d,
                 rs.toJMonth               : el[1][1],
                 rs.evalMonths             : el[2],
                 rs.holdingMonths          : el[3],
-                rs.qCut                   : el[4], }
+                rs.quantiles              : el[4], }
         print(config)
         all_configs.append(config)
     print(len(all_configs))
     return all_configs
 
-##
 def lookup_by_unique_key_val_in_df(df, lookupcol, lookupval, resultcol):
     o = list(df[df[lookupcol].eq(lookupval)][resultcol])
     o = np.unique(o)
@@ -201,45 +202,10 @@ def lookup_by_unique_key_val_in_df(df, lookupcol, lookupval, resultcol):
     else:
         return 0
 
-##
-
-
 def main():
     pass
+    ##
 
-    ##
-    df = get_adjprices()
-    df1 = find_nth_workday_jdate_each_month(df, 0)
-    df2 = find_wd_after_skipping_mmonth_and_pdays(df1, 1, 0)
-
-    ##
-    df3 = find_and_save_nth_day_and_skip_dates(df, 0, 1, 0)
-    ##
-    df = pd.DataFrame([[1, 2], [3, 4]],
-                      columns = list('AB'),
-                      index = ['x', 'y'])
-    df2 = pd.DataFrame([[1, 2], [3, 4]],
-                       columns = list('AB'),
-                       index = ['x', 'y'])
-    df.append(df2)
-    ##
-    df = pd.DataFrame({
-            po.id            : list([1, 2]),
-            po.ticker        : list(['a', 'b']),
-            po.jMonthsReturns: list([.1, -.2])})
-    df[po.tradeDate] = 139909
-    df1 = pd.DataFrame({
-            po.id              : list([1, 2]),
-            po.ticker          : list(['a', 'b']),
-            po.jMonthsReturns  : list([.1, -.2]),
-            po.lastMonthReturns: [0.2, .3]})
-    df1[po.tradeDate] = 139909
-    df2 = df1.append(df)
-    df2
-    ##
-    port = Portfolio()
-    port.add_to_portfo(df[po.id], df[po.ticker], 139806, df[po.jMonthsReturns])
-    port.portfo
-    ##
-    port.update_last_month_returns(df1, 139909)
-    port.portfo  ##
+##
+if __name__ == "__main__":
+    main()

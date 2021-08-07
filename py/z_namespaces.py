@@ -2,28 +2,25 @@
 from pathlib import Path
 from varname import nameof as no
 
+
 # constants
-xlsuf = '.xlsx'
-prqsuf = '.parquet'
+xl_suf = '.xlsx'
+parquet_suf = '.parquet'
 
 CWD = Path('.')  # project's main dir
 
-class Dirs:
+class ProjectDirectories:
     def __init__(self):
         self.py = None
         self.cache = None
         self.cleanData = None
         self.inputData = None
         self.RSSResults = None
-
         self.adjPricesInputOneCsv = None
         self.idSymInputOneCsv = None
 
         for attr_key in self.__dict__:
             self.__dict__[attr_key] = CWD / attr_key
-
-        self.adjPricesInputOneCsv = self.inputData / no(self.adjPricesInputOneCsv)
-        self.idSymInputOneCsv = self.inputData / no(self.idSymInputOneCsv)
 
         for attr_val in self.__dict__.values():
             if not attr_val.is_dir():
@@ -51,7 +48,7 @@ class InputCsvIdSym:
         for attr_key in self.__dict__:
             self.__dict__[attr_key] = attr_key
 
-class GlobalFiles(Dirs):
+class GlobalFiles(ProjectDirectories):
     def __init__(self):
         super().__init__()
         self.adjPricesPrq = None
@@ -60,7 +57,7 @@ class GlobalFiles(Dirs):
         for attr in self.__dict__:
             self.__dict__[attr] = attr
 
-        self.adjPricesPrq = self.cleanData + f'/{no(self.adjPricesPrq)}{prqsuf}'
+        self.adjPricesPrq = self.cleanData + f'/{no(self.adjPricesPrq)}{parquet_suf}'
 
 class AdjPrices:
     def __init__(self):
@@ -106,7 +103,7 @@ class RSSParams:
         self.toJMonth = None
         self.evalMonths = None
         self.holdingMonths = None
-        self.qCut = None
+        self.quantiles = None
 
         for attr in self.__dict__:
             self.__dict__[attr] = attr

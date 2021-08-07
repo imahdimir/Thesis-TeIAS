@@ -1,8 +1,9 @@
 ##
 from collections import OrderedDict
 import importlib
-from py import z_ns
+from py import z_namespaces
 import pandas as pd
+
 
 operation_order = ("prepareFilledAdjPricesData", "findAllAndWorkingDays")
 
@@ -27,6 +28,6 @@ def main():
 
 
 if __name__ == '__main__':
-    print("main.py starts.")
+    print("a_main.py starts.")
     main()
-    print(f"main.py done.")
+    print(f"a_main.py done.")

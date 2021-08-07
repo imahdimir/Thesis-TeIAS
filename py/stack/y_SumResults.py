@@ -1,19 +1,15 @@
 ##
-import main as b
 from glob import glob
 import pandas as pd
-from multiprocessing import cpu_count
 # from multiprocessing import Pool
-from multiprocess import Pool
-from varname import nameof as n
 import os
 from scipy import stats
 import pickle
 
+
 with open('configItems.pickle',
           'rb') as f:
     configItems = pickle.load(f)
-
 
 class StLog:
 
@@ -47,14 +43,12 @@ class StLog:
         self.entry = cd
         self.df1 = df1
 
-
 def target1(pn):
     st = StLog(pn)
     if st.config_dict['toYearMonth'] == 139712:
         return st.entry
     else:
         return None
-
 
 ##
 logpns = glob('backtest_results/*.xlsx')
@@ -66,7 +60,7 @@ res = pd.DataFrame()
 for xl in logpns:
     ent = target1(xl)
     res = res.append(ent,
-                     ignore_index=True)
+                     ignore_index = True)
 
 ##
 res1 = res.copy()
@@ -84,6 +78,6 @@ res1 = res1[configItems + cols]
 res1
 ##
 res1.to_excel('table1/results_sum_1.xlsx',
-              index=False)
+              index = False)
 
 ##

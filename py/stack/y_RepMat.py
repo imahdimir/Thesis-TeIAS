@@ -1,6 +1,5 @@
 # %%
 import z_main_a as a
-import main as b
 import pandas as pd
 import matplotlib.pyplot as plt
 
@@ -32,12 +31,12 @@ def main():
     ax.xaxis.set_major_locator(MultipleLocator(12))
     fig.suptitle('Number of Unique Symbols with No Trading Halt at the Start '
                  'of Each Month',
-                 fontsize=14,
-                 fontweight='bold')
+                 fontsize = 14,
+                 fontweight = 'bold')
     ax.set_xlabel('Jalali Month')
     ax.set_ylabel('Number')
-    ax.tick_params(axis='x',
-                   rotation=70)
+    ax.tick_params(axis = 'x',
+                   rotation = 70)
 
     rects = ax.patches
     labels = y1
@@ -49,20 +48,20 @@ def main():
             ax.text(rec_lbl[0].get_x() + rec_lbl[0].get_width() / 2,
                     height + 20,
                     rec_lbl[1],
-                    ha='center',
-                    va='bottom')
+                    ha = 'center',
+                    va = 'bottom')
 
     # %%
-    s1 = sa.MomentumStrategy(1,
-                             0,
-                             0,
-                             138001,
-                             139909,
-                             (1, 0),
-                             1,
-                             1,
-                             True,
-                             False)
+    s1 = sa.RelativeStrengthStrategy(1,
+                                     0,
+                                     0,
+                                     138001,
+                                     139909,
+                                     (1, 0),
+                                     1,
+                                     1,
+                                     True,
+                                     False)
     s1.proceed()
     s1logf = StLog(a.resBaktestD + '/1_0_0_138001_139909_(1, 0)_1_1_True_False')
     s1df1 = s1logf.res
@@ -80,16 +79,16 @@ def main():
     ax.xaxis.set_major_locator(MultipleLocator(12))
     fig.suptitle('Monthly Return of Equally Weighted Portfolio of All '
                  'Securities in Each Month',
-                 fontsize=14,
-                 fontweight='bold')
+                 fontsize = 14,
+                 fontweight = 'bold')
     ax.set_xlabel('Jalali Month')
     ax.set_ylabel('Return %')
     ax.grid()
 
     # %%
     df2 = pd.DataFrame({
-        'x': x2,
-        'y': y2})
+            'x': x2,
+            'y': y2})
     df2['yr'] = df2['x'].apply(lambda x: x[:4])
     df2['1+r'] = 1 + df2['y']
     df3 = df2.groupby('yr')['1+r'].prod().to_frame().reset_index()
@@ -104,8 +103,8 @@ def main():
                  y4)
     fig.suptitle('Annual Returns of Equally Weighted Portfolio of All '
                  'Securities in Each Month',
-                 fontsize=14,
-                 fontweight='bold')
+                 fontsize = 14,
+                 fontweight = 'bold')
     ax.set_xlabel('Jalali Month')
     ax.set_ylabel('Return %')
     ax.grid()
@@ -120,8 +119,8 @@ def main():
                  z1)
     fig.suptitle('Cumulative Returns of Equally Weighted Portfolio of All '
                  'Securities',
-                 fontsize=14,
-                 fontweight='bold')
+                 fontsize = 14,
+                 fontweight = 'bold')
     ax.set_xlabel('Jalali Month')
     ax.set_ylabel('Fold')
     ax.grid()
@@ -138,8 +137,8 @@ def main():
             ax.text(rec_lbl[0].get_x(),
                     height + 10,
                     rec_lbl[1],
-                    ha='center',
-                    va='bottom')
+                    ha = 'center',
+                    va = 'bottom')
 
     # %%
     m_no = len(y2)
@@ -227,8 +226,8 @@ def main():
     x4 = [1 * w for w in range(-4 * 5,
                                11 * 5)]
     p5 = ax.hist(y3,
-                 bins=x4,
-                 density=True)
+                 bins = x4,
+                 density = True)
     ax.set_xlabel('% Return')
     ax.set_ylabel('% of observations')
     # ax.set_yticklabels([w for w in range(0, 13)])
@@ -244,7 +243,7 @@ def main():
     plt.plot(x4,
              p6,
              'k',
-             linewidth=2)
+             linewidth = 2)
 
     ax.legend(['Fitted Normal Distribution', 'Monthly Returns Distribution'])
     ax.grid()
@@ -259,10 +258,10 @@ def main():
 
     # %%
     rf1cols = rf_daily1.columns
-    rf_daily1 = rf_daily1.rename(columns={
-        rf1cols[0]: a.dateC,
-        rf1cols[1]: 'JDate',
-        rf1cols[2]: 'r_f'})
+    rf_daily1 = rf_daily1.rename(columns = {
+            rf1cols[0]: a.dateC,
+            rf1cols[1]: 'JDate',
+            rf1cols[2]: 'r_f'})
     rf_daily1
 
     # %%
@@ -306,7 +305,7 @@ def main():
 
     # %%
     most_sig_100 = results_df.sort_values('r_1samp_tstat',
-                                          ascending=False).head(100)
+                                          ascending = False).head(100)
     most_sig_100
 
     # %%
@@ -318,17 +317,17 @@ def main():
     df6['P-Value'] = df6['r_1samp_pvlaue'].apply(lambda x: str(format(x,
                                                                       '.5f')))
     df6['STD'] = df6['r_tstd'].apply(lambda x: str(x)[0:5])
-    df6 = df6.rename(columns={
-        no(a.evalWdayEachMonth)     : 'Evaluation Day Each Month',
-        no(a.monSkip)               : 'Months To Skip',
-        no(a.daySkip)               : 'Days To Skip',
-        no(a.evalMonthsPair0) + '_0': 'Evaluation Period Include',
-        no(a.evalMonthsPair0) + '_1': 'Evaluation Period Exclude',
-        no(a.holdPeriod)            : 'Holding Period Months',
-        no(a.qcuts)                 : 'Qcut',
-        no(a.doesBuy)               : 'Long',
-        no(a.doesShort)             : 'Short',
-    })
+    df6 = df6.rename(columns = {
+            no(a.evalWdayEachMonth)     : 'Evaluation Day Each Month',
+            no(a.monSkip)               : 'Months To Skip',
+            no(a.daySkip)               : 'Days To Skip',
+            no(a.evalMonthsPair0) + '_0': 'Evaluation Period Include',
+            no(a.evalMonthsPair0) + '_1': 'Evaluation Period Exclude',
+            no(a.holdPeriod)            : 'Holding Period Months',
+            no(a.qcuts)                 : 'Qcut',
+            no(a.doesBuy)               : 'Long',
+            no(a.doesShort)             : 'Short',
+            })
 
     # %%
     df7 = df6[
@@ -341,12 +340,12 @@ def main():
     df7
 
     # %%
-    tex1 = df7.to_latex(index=False,
-                        escape=False,
-                        header=[
-                            '\\rotatebox{90}{\\tiny{' + c + '}}'
-                            for c in
-                            df7.columns])
+    tex1 = df7.to_latex(index = False,
+                        escape = False,
+                        header = [
+                                '\\rotatebox{90}{\\tiny{' + c + '}}'
+                                for c in
+                                df7.columns])
     tex1
 
     # %%
@@ -408,8 +407,8 @@ def main():
                 y5)
 
         fig.suptitle('Monthly Returns for 10 Most Significant Strategies',
-                     fontsize=14,
-                     fontweight='bold')
+                     fontsize = 14,
+                     fontweight = 'bold')
         ax.set_ylabel('% Return')
 
         # %%
@@ -426,8 +425,8 @@ def main():
                 y5)
 
         fig.suptitle('Monthly Returns for 10 Most Significant Strategies',
-                     fontsize=14,
-                     fontweight='bold')
+                     fontsize = 14,
+                     fontweight = 'bold')
         ax.set_ylabel('% Return')
 
         # %%
@@ -437,8 +436,8 @@ def main():
         y6 = one_percent_sig['r_mean_mean'] * 100
 
         p7 = ax.hist(y6,
-                     bins=x6,
-                     density=True)
+                     bins = x6,
+                     density = True)
         ax.set_xlabel('% Return')
         ax.set_ylabel('% of Strategies')
         ax.xaxis.set_major_locator(MultipleLocator(5))
@@ -447,8 +446,8 @@ def main():
 
         fig.suptitle('Distributions of Returns in All 1% Significant '
                      'Strategies',
-                     fontsize=14,
-                     fontweight='bold')
+                     fontsize = 14,
+                     fontweight = 'bold')
 
         # %%
         ov_ind = pd.read_csv(a.indataD + f'/indexes_1399-09-28.csv')
@@ -473,17 +472,17 @@ def main():
     ov_ind_1['Month'] = ov_ind_1['date'].apply(convert_date)
 
     # %%
-    ov_ind_2 = ov_ind_1.drop_duplicates(subset='Month')
+    ov_ind_2 = ov_ind_1.drop_duplicates(subset = 'Month')
 
     # %%
     for e in pns1:
         obj = StLog(a.resBaktestD + f'/{e}')
         mrets = obj.month_rets[[a.tradeMonEndJmonth, a.retMean]]
-        mrets = mrets.rename(columns={
-            a.retMean          : str(list(obj.config.values())),
-            a.tradeMonEndJmonth: 'Month'})
+        mrets = mrets.rename(columns = {
+                a.retMean          : str(list(obj.config.values())),
+                a.tradeMonEndJmonth: 'Month'})
         ov_ind_2 = ov_ind_2.merge(mrets,
-                                  how='left')
+                                  how = 'left')
 
     # %%
     ov_ind_2['indexg'] = ov_ind_2['index'].pct_change()
@@ -509,8 +508,8 @@ def main():
                 ov_ind_3.iloc[:, i])
 
     fig.suptitle('Relative Comparison Between Overall Index and Strategies',
-                 fontsize=14,
-                 fontweight='bold')
+                 fontsize = 14,
+                 fontweight = 'bold')
     ax.set_ylabel('Fold')
     ax.grid()
     ax.xaxis.set_major_locator(MultipleLocator(12))

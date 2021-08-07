@@ -4,14 +4,15 @@ from datetime import datetime as dt
 import pandas as pd
 from persiantools.jdatetime import JalaliDate
 
-from py import z_ns
+from py import z_namespaces as ns
+
 
 # Shortened Namespaces
-dirs = z_ns.Dirs()
-iap = z_ns.InputCsvAdjPrices()
-ap = z_ns.AdjPrices()
-ic = z_ns.InputCsvIdSym()
-gf = z_ns.GlobalFiles()
+dirs = ns.ProjectDirectories()
+iap = ns.InputCsvAdjPrices()
+ap = ns.AdjPrices()
+ic = ns.InputCsvIdSym()
+gf = ns.GlobalFiles()
 
 def main():
     pass
@@ -48,8 +49,8 @@ def main():
     tickers = tickers[[ap.id, ap.ticker]]
     tickers = tickers.dropna()
     tickers[ap.ticker] = tickers[ap.ticker].apply(lambda x: str(x).replace(
-        "\u200c",
-        ''))
+            "\u200c",
+            ''))
     tickers[ap.ticker] = tickers[ap.ticker].str.strip()
 
     tickers[ap.id] = tickers[ap.id].astype(int)
@@ -81,18 +82,18 @@ def main():
     df = df[list(ap.__dict__.values())]
 
     pn = gf.adjPricesPrq
+    print(df)
     df.to_parquet(pn, index = False)
-    print(pn)  ##
+    print(pn)
 
 ##
-
-
 if __name__ == '__main__':
     main()
-print(f"""
+    print(f"""
     
         
           Finish.
           Sc. {__file__} done.""")
-
-##
+else:
+    pass
+    ##

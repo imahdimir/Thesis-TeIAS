@@ -3,8 +3,9 @@
 import pandas as pd
 from persiantools.jdatetime import JalaliDate
 
-from py import z_cf as fu
-from py import z_ns as pa
+from py import z_classesFunctions as fu
+from py import z_namespaces as pa
+
 
 def main():
     pass

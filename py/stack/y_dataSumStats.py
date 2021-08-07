@@ -4,9 +4,10 @@ from datetime import datetime as dt
 import pandas as pd
 from dateutil.relativedelta import relativedelta
 
-from py import z_cf as fu
-from py import main as m
-from py import MakeFilledAdjPricesData as LastSc  # last script
+from py import z_classesFunctions as fu
+from py import a_main as m
+from py import b_makeFilledAdjPricesData as LastSc  # last script
+
 
 ps = LastSc
 script_name = fu.next_script_name(ps.ScN)
@@ -43,7 +44,7 @@ gen_stats_dict = {
         "% Halted"                                      : len(
                 data[data['TradeHalt']]) / len(data),
         'Mean all Observation per Firm'                 : len(data) / len(
-            data['Ticker'].unique()),
+                data['Ticker'].unique()),
         'Mean Not Halted per Firm'                      : len(
                 data[~data['TradeHalt']]) / len(data['Ticker'].unique()),
         'Mean Halted per Firm'                          : len(

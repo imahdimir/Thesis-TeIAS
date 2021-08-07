@@ -1,19 +1,33 @@
 ##
 import pandas as pd
-from py import z_cf
-from py import z_ns
-from py.RunRSS import all_configs
-from py.RSS import MomentumStrategy
+from py import z_classesFunctions as cf
+from py import z_namespaces as ns
+from py.c_RSS import RelativeStrengthStrategy
 from scipy import stats
 from multiprocess import Pool
 from pathlib import Path
 
-apw = z_ns.AdjPricesWithDates()
-rs = z_ns.RSSParams()
-ar = z_ns.AllResults()
-gf = z_ns.GlobalFiles()
 
-class MomentumStrategyResults(MomentumStrategy):
+apw = ns.AdjPricesWithDates()
+rs = ns.RSSParams()
+ar = ns.AllResults()
+gf = ns.GlobalFiles()
+
+evalSkipMonthSkipDay_0 = [(0, 0, 0)]
+fromMonthToMonth = [(138001, 138912)]
+evalMonths = [3]
+holdingMonths = [3]
+qCut = [10]
+
+all_configs_2 = cf.build_all_possible_configs(eval_day_skip_m_skip_d = evalSkipMonthSkipDay_0,
+                                              from_month_to_month = fromMonthToMonth,
+                                              eval_months = evalMonths,
+                                              holding_months = holdingMonths,
+                                              qcuts = qCut)
+
+all_configs = all_configs_2
+
+class RelativeStrengthStrategyResults(RelativeStrengthStrategy):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         super().set_paths()
@@ -33,7 +47,7 @@ class MomentumStrategyResults(MomentumStrategy):
     def specify_not_cum_cols(self):
         par = self.params
 
-        self.not_cum_cols = list(range(1, par[rs.qCut] + 1)) + ['w-l']
+        self.not_cum_cols = list(range(1, par[rs.quantiles] + 1)) + ['w-l']
         print(self.not_cum_cols)
 
     def set_date_as_index(self):
@@ -43,8 +57,10 @@ class MomentumStrategyResults(MomentumStrategy):
     def fillna_with_zero(self):
         par = self.params
 
-        self.bhxl = self.bhxl.iloc[par[rs.qCut]:]
-        self.rbxl = self.rbxl.iloc[par[rs.qCut]:]
+        required_lagged_returns = par[rs.evalMonths] + par[
+            rs.holdingMonths] - 1 - 1
+        self.bhxl = self.bhxl.iloc[required_lagged_returns:]
+        self.rbxl = self.rbxl.iloc[required_lagged_returns:]
 
         self.bhxl = self.bhxl.fillna(0)
         self.rbxl = self.rbxl.fillna(0)
@@ -52,8 +68,8 @@ class MomentumStrategyResults(MomentumStrategy):
     def cal_winners_minus_losers_monthly_returns(self):
         par = self.params
 
-        self.bhxl['w-l'] = self.bhxl[par[rs.qCut]] - self.bhxl[1]
-        self.rbxl['w-l'] = self.rbxl[par[rs.qCut]] - self.rbxl[1]
+        self.bhxl['w-l'] = self.bhxl[par[rs.quantiles]] - self.bhxl[1]
+        self.rbxl['w-l'] = self.rbxl[par[rs.quantiles]] - self.rbxl[1]
 
     def cal_cum_returns(self):
         colorder = []
@@ -66,8 +82,8 @@ class MomentumStrategyResults(MomentumStrategy):
         self.bhxl = self.bhxl[colorder]
 
     def save_cum_returns(self):
-        z_cf.save_df_to_xl(self.bhxl, self.res_dir / ar.bh_cum)
-        z_cf.save_df_to_xl(self.rbxl, self.res_dir / ar.rb_cum)
+        cf.save_df_to_xl(self.bhxl, self.res_dir / ar.bh_cum, index = True)
+        cf.save_df_to_xl(self.rbxl, self.res_dir / ar.rb_cum, index = True)
 
     def cal_tstat_and_describe_and_save(self):
         par = self.params
@@ -106,12 +122,12 @@ class MomentumStrategyResults(MomentumStrategy):
         self.bhxl_desc = self.bhxl_desc.append([tsat_bh, pval_bh])
         self.rbxl_desc = self.rbxl_desc.append([tsat_rb, pval_rb])
 
-        z_cf.save_df_to_xl(self.bhxl_desc,
-                           self.res_dir / ar.bh_desc,
-                           index = True)
-        z_cf.save_df_to_xl(self.rbxl_desc,
-                           self.res_dir / ar.rb_desc,
-                           index = True)
+        cf.save_df_to_xl(self.bhxl_desc,
+                         self.res_dir / ar.bh_desc,
+                         index = True)
+        cf.save_df_to_xl(self.rbxl_desc,
+                         self.res_dir / ar.rb_desc,
+                         index = True)
 
     def run_1(self):
         self.read_monthly_returns_xl_files()
@@ -127,16 +143,16 @@ class MomentumStrategyResults(MomentumStrategy):
     def run_2(self):
         par = self.params
 
-        bh_desc = pd.read_excel(self.res_dir / f'{ar.bh_desc}{z_ns.xlsuf}',
+        bh_desc = pd.read_excel(self.res_dir / f'{ar.bh_desc}{ns.xl_suf}',
                                 index_col = 0)
-        rb_desc = pd.read_excel(self.res_dir / f'{ar.rb_desc}{z_ns.xlsuf}',
+        rb_desc = pd.read_excel(self.res_dir / f'{ar.rb_desc}{ns.xl_suf}',
                                 index_col = 0)
 
         res = []
         config = self.params.copy()
         for st_type, df in zip([ar.buy_and_hold, ar.rebalanced],
                                [bh_desc, rb_desc]):
-            for bin_no in list(range(1, par[rs.qCut] + 1)) + ['w-l']:
+            for bin_no in list(range(1, par[rs.quantiles] + 1)) + ['w-l']:
                 config[ar.strategyType] = st_type
                 config[ar.binNo] = bin_no
                 config[ar.meanReturns] = df.loc['mean', bin_no]
@@ -147,11 +163,11 @@ class MomentumStrategyResults(MomentumStrategy):
         return res
 
 def target(config):
-    mr = MomentumStrategyResults(**config)
+    mr = RelativeStrengthStrategyResults(**config)
     mr.run_1()
 
 def target1(config):
-    mr = MomentumStrategyResults(**config)
+    mr = RelativeStrengthStrategyResults(**config)
     return mr.run_2()
 
 def main():
@@ -159,7 +175,7 @@ def main():
     ##
     aconf = all_configs[0]
     print(aconf)
-    ams = MomentumStrategyResults(**aconf)
+    ams = RelativeStrengthStrategyResults(**aconf)
     ams.read_monthly_returns_xl_files()
     adf = ams.bhxl
     ams.set_date_as_index()
@@ -168,8 +184,8 @@ def main():
     cores_n = 6
     # cores_n = 6
     print(f"Num of cores : {cores_n}")
-    clusters = z_cf.return_clusters_indices(iterable_obj = all_configs,
-                                            clustersize = cores_n)
+    clusters = cf.return_clusters_indices(iterable_obj = all_configs,
+                                          clustersize = cores_n)
     pool = Pool(cores_n)
     ##
     for i in range(0, len(clusters) - 1):
@@ -186,7 +202,7 @@ def main():
         results = target1(inpu)
         all_results_df = all_results_df.append(results, ignore_index = True)
 
-    z_cf.save_df_to_xl(all_results_df, Path(gf.allResults_Xl))
+    cf.save_df_to_xl(all_results_df, Path(gf.allResults_Xl))
 
 ##
 if __name__ == '__main__':

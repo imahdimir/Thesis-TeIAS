@@ -4,11 +4,12 @@ import itertools
 import pandas as pd
 
 from py import relativeStrengthStrategies as jd93
-from py import z_ns as pa
-from py import z_cf as fu
+from py import z_namespaces as pa
+from py import z_classesFunctions as fu
 
 from matplotlib import pyplot as plt
 from matplotlib.ticker import MultipleLocator
+
 
 apns = pa.AdjPricesWithDates()
 spn = pa.RSSParams()
@@ -23,9 +24,9 @@ evalSkipMonthSkipDay = [(0, 0, 0), (0, 0, 7)]
 fromMonthToMonth = [(138001, 139909)]
 base.evalMonths = [3, 6, 9, 12]
 base.holdingMonths = [3, 6, 9, 12]
-base.qCut = [10]
+base.quantiles = [10]
 all_vals = [evalSkipMonthSkipDay, fromMonthToMonth, base.evalMonths,
-            base.holdingMonths, base.qCut]
+            base.holdingMonths, base.quantiles]
 
 all_sts = list(itertools.product(*all_vals))
 print(all_sts)
@@ -40,12 +41,12 @@ for el in all_sts:
             spn.toJMonth               : el[1][1],
             spn.evalMonths             : el[2],
             spn.holdingMonths          : el[3],
-            spn.qCut                   : el[4]}
+            spn.quantiles              : el[4]}
     print(config)
     all_configs.append(config)
 
 def plot_cum_returns(config):
-    st1 = jd93.MomentumStrategy(**config)
+    st1 = jd93.RelativeStrengthStrategy(**config)
     st1.initialize()
     bhpn = st1.res_dir / 'buy-and-hold.xlsx'
     bh = pd.read_excel(bhpn)
@@ -104,8 +105,8 @@ def plot_cum_returns(config):
     figpns.append((st1.res_dir / f'{bn}.svg').resolve())
 
     bhcum = bh.copy()
-    bhcum[f'{st1.qCut} minus 1'] = bhcum[st1.qCut] - bhcum[1]
-    bn = f'{st1.qCut} minus 1'
+    bhcum[f'{st1.quantiles} minus 1'] = bhcum[st1.quantiles] - bhcum[1]
+    bn = f'{st1.quantiles} minus 1'
     fu.save_df_to_xl(bhcum, st1.res_dir / f'{bn}.xlsx')
 
     fig, ax = plt.subplots()
@@ -120,9 +121,9 @@ def plot_cum_returns(config):
     ax.set_xlabel('JDate')
     ax.set_ylabel('Fold')
     plt.xticks(rotation = 30)
-    ax.plot(x1, bhcum[f'{st1.qCut} minus 1'])
+    ax.plot(x1, bhcum[f'{st1.quantiles} minus 1'])
 
-    fig.suptitle(f'{st1.qCut} minus 1-{st1.res_dir_n}')
+    fig.suptitle(f'{st1.quantiles} minus 1-{st1.res_dir_n}')
     plt.savefig(st1.res_dir / f'{bn}.png')
     plt.savefig(st1.res_dir / f'{bn}.svg')
     figpns.append((st1.res_dir / f'{bn}.svg').resolve())
@@ -144,7 +145,7 @@ def main():
         f.write(txt)
 
     ##
-    st1 = jd93.MomentumStrategy(**all_configs[0])
+    st1 = jd93.RelativeStrengthStrategy(**all_configs[0])
     st1.initialize()
     bhpn = st1.res_dir / 'buy-and-hold.xlsx'
     bh = pd.read_excel(bhpn)
@@ -200,8 +201,8 @@ def main():
     plt.savefig(st1.res_dir / f'{bn}.svg')
 
     bhcum = bh.copy()
-    bhcum[f'{st1.qCut} minus 1'] = bhcum[st1.qCut] - bhcum[1]
-    bn = f'{st1.qCut} minus 1'
+    bhcum[f'{st1.quantiles} minus 1'] = bhcum[st1.quantiles] - bhcum[1]
+    bn = f'{st1.quantiles} minus 1'
     fu.save_df_to_xl(bhcum, st1.res_dir / f'{bn}.xlsx')
 
     fig, ax = plt.subplots()
@@ -216,9 +217,9 @@ def main():
     ax.set_xlabel('JDate')
     ax.set_ylabel('Fold')
     plt.xticks(rotation = 30)
-    ax.plot(x1, bhcum[f'{st1.qCut} minus 1'])
+    ax.plot(x1, bhcum[f'{st1.quantiles} minus 1'])
 
-    fig.suptitle(f'{st1.qCut} minus 1-{st1.res_dir_n}')
+    fig.suptitle(f'{st1.quantiles} minus 1-{st1.res_dir_n}')
     plt.savefig(st1.res_dir / f'{bn}.png')
     plt.savefig(st1.res_dir / f'{bn}.svg')
 
