@@ -4,7 +4,7 @@ from datetime import datetime as dt
 import pandas as pd
 from dateutil.relativedelta import relativedelta
 
-from py import z_classesFunctions as fu
+from py import z_cf as fu
 from py import a_main as m
 from py import b_makeFilledAdjPricesData as LastSc  # last script
 

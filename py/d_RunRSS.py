@@ -5,9 +5,9 @@ import warnings
 from multiprocessing import freeze_support, cpu_count
 from multiprocessing import Pool
 
-from py import z_classesFunctions as cf
+from py import z_cf as cf
 from py import c_RSS
-from py import z_namespaces as ns
+from py import z_ns as ns
 
 
 warnings.filterwarnings("ignore")

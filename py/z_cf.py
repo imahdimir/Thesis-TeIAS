@@ -1,4 +1,6 @@
 ##
+# classes and functions
+
 import pathlib
 import itertools
 
@@ -9,7 +11,7 @@ from dateutil.relativedelta import relativedelta
 from openpyxl.utils.dataframe import dataframe_to_rows
 from persiantools.jdatetime import JalaliDate
 
-from py import z_namespaces as ns
+from py import z_ns as ns
 
 
 # Shortened Namespaces
@@ -157,7 +159,8 @@ def compute_bins_numbers(prices_df, groupby_list, which_col, quantiles):
         prices_df[prices_df[which_col].notna()].groupby(groupby_list)[
             which_col].apply(lambda x: 1 + pd.qcut(x,
                                                    q = quantiles,
-                                                   labels = False))
+                                                   labels = False,
+                                                   duplicates = 'drop'))
     return prices_df
 
 def build_all_possible_configs(eval_day_skip_m_skip_d,

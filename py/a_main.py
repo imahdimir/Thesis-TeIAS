@@ -1,7 +1,7 @@
 ##
 from collections import OrderedDict
 import importlib
-from py import z_namespaces
+from py import z_ns
 import pandas as pd
 
 

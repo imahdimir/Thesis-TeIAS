@@ -1,31 +1,33 @@
 ##
 import pandas as pd
-from py import z_classesFunctions as cf
-from py import z_namespaces as ns
+from py import z_cf as cf
+from py import z_ns as ns
 from py.c_RSS import RelativeStrengthStrategy
 from scipy import stats
 from multiprocess import Pool
 from pathlib import Path
 
 
-apw = ns.AdjPricesWithDates()
+ap = ns.AdjPricesWithDates()
 rs = ns.RSSParams()
 ar = ns.AllResults()
 gf = ns.GlobalFiles()
 
-evalSkipMonthSkipDay_0 = [(0, 0, 0)]
-fromMonthToMonth = [(138001, 138912)]
-evalMonths = [3]
-holdingMonths = [3]
-qCut = [10]
+evalSkipMonthSkipDay = [(0, 0, 0), (0, 0, 7)]
+fromMonthToMonth = [(138001, 139712), (138001, 139812), (138001, 138912)]
+evalMonths = [3, 6, 9, 12]
+holdingMonths = [3, 6, 9, 12]
+quantiles = [5, 10]
 
-all_configs_2 = cf.build_all_possible_configs(eval_day_skip_m_skip_d = evalSkipMonthSkipDay_0,
-                                              from_month_to_month = fromMonthToMonth,
-                                              eval_months = evalMonths,
-                                              holding_months = holdingMonths,
-                                              qcuts = qCut)
+conf_list_0 = cf.build_all_possible_configs(eval_day_skip_m_skip_d = evalSkipMonthSkipDay,
+                                            from_month_to_month = fromMonthToMonth,
+                                            eval_months = evalMonths,
+                                            holding_months = holdingMonths,
+                                            quantiles = quantiles)
 
-all_configs = all_configs_2
+all_configs = conf_list_0
+print(all_configs)
+print(len(all_configs))
 
 class RelativeStrengthStrategyResults(RelativeStrengthStrategy):
     def __init__(self, **kwargs):
@@ -50,18 +52,34 @@ class RelativeStrengthStrategyResults(RelativeStrengthStrategy):
         self.not_cum_cols = list(range(1, par[rs.quantiles] + 1)) + ['w-l']
         print(self.not_cum_cols)
 
-    def set_date_as_index(self):
-        self.bhxl = self.bhxl.set_index([apw.afterSkipWDDate])
-        self.rbxl = self.rbxl.set_index([apw.afterSkipWDDate])
-
-    def fillna_with_zero(self):
+    def remove_months_with_lower_than_k_portfolio(self):
         par = self.params
 
         required_lagged_returns = par[rs.evalMonths] + par[
-            rs.holdingMonths] - 1 - 1
+            rs.holdingMonths] - 1
+
         self.bhxl = self.bhxl.iloc[required_lagged_returns:]
         self.rbxl = self.rbxl.iloc[required_lagged_returns:]
 
+        self.bhxl = self.bhxl.reset_index(drop = True)
+        self.rbxl = self.rbxl.reset_index(drop = True)
+
+    def remove_until_first_full_cal_year(self):
+        self.bhxl['month'] = self.bhxl[
+            ap.afterSkipWDDate].apply(lambda x: x.month)
+
+        self.bhxl['farvardin'] = self.bhxl['month'].eq(3)
+        idx = self.bhxl['farvardin'].idxmax()
+        print(idx)
+
+        self.bhxl = self.bhxl.iloc[idx:]
+        self.rbxl = self.rbxl.iloc[idx:]
+
+    def set_date_as_index(self):
+        self.bhxl = self.bhxl.set_index([ap.afterSkipWDDate])
+        self.rbxl = self.rbxl.set_index([ap.afterSkipWDDate])
+
+    def fillna_with_zero(self):
         self.bhxl = self.bhxl.fillna(0)
         self.rbxl = self.rbxl.fillna(0)
 
@@ -86,8 +104,6 @@ class RelativeStrengthStrategyResults(RelativeStrengthStrategy):
         cf.save_df_to_xl(self.rbxl, self.res_dir / ar.rb_cum, index = True)
 
     def cal_tstat_and_describe_and_save(self):
-        par = self.params
-
         self.bhxl_desc = self.bhxl.describe()
         self.rbxl_desc = self.rbxl.describe()
 
@@ -132,6 +148,8 @@ class RelativeStrengthStrategyResults(RelativeStrengthStrategy):
     def run_1(self):
         self.read_monthly_returns_xl_files()
         self.specify_not_cum_cols()
+        self.remove_months_with_lower_than_k_portfolio()
+        self.remove_until_first_full_cal_year()
         self.set_date_as_index()
         self.fillna_with_zero()
         self.cal_winners_minus_losers_monthly_returns()
@@ -177,8 +195,11 @@ def main():
     print(aconf)
     ams = RelativeStrengthStrategyResults(**aconf)
     ams.read_monthly_returns_xl_files()
-    adf = ams.bhxl
-    ams.set_date_as_index()
+    adf0 = ams.bhxl
+    ams.specify_not_cum_cols()
+    ams.remove_months_with_lower_than_k_portfolio()
+    adf1 = ams.bhxl
+    ams.remove_until_first_full_cal_year()
     adf = ams.bhxl
     ##
     cores_n = 6
@@ -208,3 +229,6 @@ def main():
 if __name__ == '__main__':
     main()
     print('Sc done!')
+else:
+    pass
+    ##

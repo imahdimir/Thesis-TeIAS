@@ -4,7 +4,7 @@ from datetime import datetime as dt
 import pandas as pd
 from persiantools.jdatetime import JalaliDate
 
-from py import z_namespaces as ns
+from py import z_ns as ns
 
 
 # Shortened Namespaces

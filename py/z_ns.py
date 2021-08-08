@@ -1,4 +1,5 @@
 ##
+# namespaces
 from pathlib import Path
 from varname import nameof as no
 
@@ -18,6 +19,7 @@ class ProjectDirectories:
         self.RSSResults = None
         self.adjPricesInputOneCsv = None
         self.idSymInputOneCsv = None
+        self.report_mat = None
 
         for attr_key in self.__dict__:
             self.__dict__[attr_key] = CWD / attr_key
@@ -143,4 +145,4 @@ class JupyNBReports():
         self.longMinusShort = None
 
         for attr in self.__dict__:
-            self.__dict__[attr] = attr  ##
+            self.__dict__[attr] = attr

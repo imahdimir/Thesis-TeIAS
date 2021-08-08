@@ -4,8 +4,8 @@ import itertools
 import pandas as pd
 
 from py import relativeStrengthStrategies as jd93
-from py import z_namespaces as pa
-from py import z_classesFunctions as fu
+from py import z_ns as pa
+from py import z_cf as fu
 
 from matplotlib import pyplot as plt
 from matplotlib.ticker import MultipleLocator
